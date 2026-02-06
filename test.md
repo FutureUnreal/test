@@ -8,6 +8,8 @@
 - `ANTHROPIC_API_KEY`（Claude PR Review / Issue workflows 会用到）
 
 > `OPENAI_BASE_URL` / `ANTHROPIC_BASE_URL` 只有你用代理/兼容网关时才需要；不配会走默认。
+>
+> 注意：`openai/codex-action` 用的是 **Responses API**（最终会请求 `…/v1/responses`）。本仓库 workflow 允许你把 `OPENAI_BASE_URL` 填到 `…/v1` 或 `…/v1/responses`，会自动补全到正确的 `…/responses` 端点。
 
 ## 重要：`pull_request_target` 工作流从“默认分支”读取
 
