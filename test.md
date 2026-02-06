@@ -129,3 +129,7 @@ Branch rules（main 推荐更严格一点）
 - 回到 Ruleset 的 Require status checks to pass → Add checks，用看到的名字把它们选进去（一般就是 PR Checks / backend、
 PR Checks / frontend、Codex PR Review / pr-review、Claude PR Review / pr-review 等）。
 测试 workflow 修复
+## 测试权限修复
+
+测试时间: 2026年02月 7日  4:47:35
+测试目的: 验证 GitHub Actions workflow permissions 配置是否正确
