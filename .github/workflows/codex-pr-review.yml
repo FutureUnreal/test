@@ -7,9 +7,7 @@ on:
 jobs:
   pr-review:
     if: |
-      github.event.pull_request.draft == false &&
-      !endsWith(github.actor, '[bot]') &&
-      secrets.OPENAI_API_KEY != ''
+      github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     concurrency:
       group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
@@ -20,6 +18,13 @@ jobs:
       issues: write
 
     steps:
+      - name: Validate OpenAI configuration
+        run: |
+          if [ -z "${{ secrets.OPENAI_API_KEY }}" ]; then
+            echo "::error::Missing required secret OPENAI_API_KEY (Settings → Secrets and variables → Actions)."
+            exit 1
+          fi
+
       - name: Checkout base branch (safe)
         uses: actions/checkout@v5
         with:
@@ -42,6 +47,16 @@ jobs:
           sandbox: read-only
           safety-strategy: drop-sudo
           prompt-file: .github/prompts/codex-pr-review.md
+
+      - name: Validate Codex output
+        shell: bash
+        env:
+          FINAL_MESSAGE: ${{ steps.run_codex.outputs.final-message }}
+        run: |
+          if [[ -z "${FINAL_MESSAGE//[[:space:]]/}" ]]; then
+            echo "::error::Codex returned empty output; failing to avoid passing a required check without a review."
+            exit 1
+          fi
 
       - name: Upsert PR comment
         if: steps.run_codex.outputs.final-message != ''
