@@ -9,6 +9,16 @@
 
 > `OPENAI_BASE_URL` / `ANTHROPIC_BASE_URL` 只有你用代理/兼容网关时才需要；不配会走默认。
 
+## 重要：`pull_request_target` 工作流从“默认分支”读取
+
+本仓库里这些 workflow 用的是 `pull_request_target`（例如：PR Labels、Codex/Claude PR Review、Codex PR Description）。
+
+GitHub 在 **2025-12-08** 起调整了行为：`pull_request_target` 事件会**始终使用默认分支（Default branch）**作为 workflow 来源与执行引用（与 PR 目标分支无关）。
+
+所以：
+- 你要改这些 workflow，必须把改动合进**默认分支**（你仓库当前默认分支是 `main`），否则 PR 上跑的还是默认分支里的旧 workflow。
+- 如果你希望“以 `dev` 为准”来管理这些 workflow，最省事的做法是把默认分支改成 `dev`（Settings → Branches → Default branch）。
+
 ## 规则集 1：保护 dev（现在就能生效）
 
 Ruleset Name
@@ -24,6 +34,12 @@ Bypass list（怎么选）
 - 推荐：只加 Repository administrators（或只加你自己），用于紧急情况下绕过规则
 - 不推荐：加太多人/团队（会削弱门禁）
 
+Bypass mode（Always / For pull requests only / Exempt）
+
+- 推荐：**For pull requests only**（保留门禁，但允许管理员在 PR 合并时“点一下确认绕过”用于紧急解锁；同时阻止你在命令行直接 push 绕过门禁）
+- 次选：Always（管理员连命令行 push 也能绕过；权限更大）
+- 不推荐：Exempt（相当于完全不受 ruleset 约束）
+
 Target branches（怎么设置）
 
 （Ruleset 的 Target branches 不是“下拉选分支”，而是“按 pattern 选”）
@@ -32,6 +48,12 @@ Target branches（怎么设置）
 - 选择：`Include` → `Branch name pattern`
   - Pattern 填：`dev`
 - `Exclude`：留空
+
+> 如果你在 UI 里真的只能选 “默认分支 / 全部分支”，选不到 pattern：
+> - 方案 A（推荐）：把默认分支改成 `dev`，然后 ruleset 选“默认分支”
+> - 方案 B：选“全部分支”，再用 Exclude pattern 把 `feature/*`、`ci/*` 等排除掉（避免把所有分支都锁死）
+> - 方案 C：不用 Ruleset，改用经典的 Branch protection rule（Settings → Branches → Add branch protection rule，用 `dev` 作为 pattern）
+
 ### Branch rules（哪些勾，哪些不勾）
 - Restrict creations：不勾（和工作流无关；一般不用）
 - Restrict updates：不勾（⚠️会让“更新 dev 分支”的权限变得很严：通常只有 bypass actors 能更新，容易导致别人 PR 过了也合不进去）
@@ -52,7 +74,7 @@ Target branches（怎么设置）
       - PR Checks / frontend
       - Codex PR Review / pr-review
       - Claude PR Review / pr-review
-      - （可选）Codex PR Description / pr-description
+      - Codex PR Description / pr-description（你想“PR 说明也必须生成”就把它也设为 Required）
 - Require branches to be up to date before merging：dev 按需（勾上后 base 分支有新提交时，PR 必须先 update 才能合并；Required checks 会重跑，包含 Codex/Claude，耗时/成本更高但更安全）
 - Do not require status checks on creation：建议勾（允许创建分支/仓库时不被 required checks 卡住；不放松合并门禁）
 - Block force pushes：勾

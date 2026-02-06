@@ -10,6 +10,10 @@
 
 ## ✅ 工作流一览
 
+> 说明：本仓库有多条工作流使用 `pull_request_target`（PR Labels、Codex/Claude PR Review、Codex PR Description）。
+> GitHub 在 **2025-12-08** 起调整行为：`pull_request_target` 会始终从仓库的 **Default branch** 读取/执行 workflow。
+> 因此要修改这些 workflow，必须把改动合进默认分支（当前是 `main`），否则 PR 上跑的仍是默认分支里的旧版本。
+
 ### 1) `PR Checks`（`.github/workflows/pr-check.yml`）
 
 - **触发**：向 `main` 或 `dev` 提交 PR 时（opened/synchronize/reopened/ready_for_review）
