@@ -98,7 +98,7 @@
 
 ### Secrets（可选）
 
-- `OPENAI_BASE_URL`：如使用 OpenAI 兼容网关/自建网关，可填 base url（默认走 `https://api.openai.com/v1`）
+- `OPENAI_BASE_URL`：如使用 OpenAI 兼容网关/自建网关，可填网关地址（推荐填到 `/v1` 或完整的 `/v1/responses`；workflow 会自动补全 `/responses`）。不填则使用 `openai/codex-action` 内置默认端点。
 - `ANTHROPIC_BASE_URL`：如使用 Anthropic 兼容网关/自建网关，可填 base url
 
 ### Variables（可选）
