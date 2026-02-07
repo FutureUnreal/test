@@ -47,6 +47,6 @@ jobs:
           responses-api-endpoint: ${{ steps.responses_endpoint.outputs.endpoint }}
           model: ${{ vars.OPENAI_MODEL || 'gpt-5.2' }}
           effort: ${{ vars.OPENAI_EFFORT || 'medium' }}
-          sandbox: read-only
+          sandbox: danger-full-access
           safety-strategy: drop-sudo
           prompt-file: .github/prompts/codex-issue-auto-response.md
