@@ -133,3 +133,13 @@ PR Checks / frontend、Codex PR Review / pr-review、Claude PR Review / pr-revie
 
 测试时间: 2026年02月 7日  4:47:35
 测试目的: 验证 GitHub Actions workflow permissions 配置是否正确
+## 权限修复验证 v2
+
+测试时间: 2026年02月 7日  4:51:38
+修复内容:
+- pr-label.yml: pull-requests: read → write
+- codex-pr-review.yml: pull-requests: read → write
+
+预期结果: 
+- ✅ PR Labels workflow 应该能成功添加标签
+- ✅ Codex PR Review 应该能成功添加评论
